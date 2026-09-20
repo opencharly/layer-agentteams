@@ -1,0 +1,34 @@
+# agentteams — the AgentTeams top box (cachyos base composing the LOCAL
+# agentteams top composition candy). Declared in a separate discovered file
+# because a single document's top-level node names are globally unique: the
+# candy/agentteams/charly.yml holds the `agentteams` CANDY (the layer fragment),
+# so the IMAGE of the same name lives here. Cross-FILE cross-kind reuse is
+# permitted (the loader routes by shape), and `discover: box` picks this up.
+#
+# Moved here from opencharly/charly's charly.yml, which cannot exercise this
+# candy as in-development code (the bed's dev-tree override resolves the bed
+# project's own superproject, not the candy owner), so the artifact owner builds
+# and tests its own composition locally.
+agentteams:
+    candy:
+        version: 2026.243.0300
+        base: cachyos-base
+        description: |-
+            The AgentTeams top box: a cachyos base composing the agentteams top
+            composition candy — agentteams-minio (MinIO S3 + mc-mirror),
+            agentteams-matrix (Tuwunel Matrix homeserver), agentteams-element
+            (Element Web via rootless nginx), agentteams-higress (the Higress AI
+            gateway: apiserver, controller, pilot, envoy gateway, console), and
+            agentteams-controller (the kine-backed kube-apiserver + Manager/
+            Worker/Team/Human reconciler serving the REST API on :8090). Every
+            service runs as the image user (uid 1000) against its own
+            home-relative volume (~/.agentteams/minio, ~/.agentteams/matrix,
+            ~/.agentteams/higress, ~/.agentteams/controller) — the rootless charly
+            architecture, no root anywhere. All service start scripts are
+            charly-owned (written by the candies), not upstream AgentTeams
+            scripts. Spawned Manager/Worker containers join the charly network
+            and reach the controller — and every in-container service — by the
+            controller container's DNS name.
+        candy:
+            - '@github.com/opencharly/layer-supervisord:v2026.240.0121'
+            - agentteams

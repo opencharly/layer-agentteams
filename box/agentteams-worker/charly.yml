@@ -1,0 +1,29 @@
+agentteams-worker:
+    candy:
+        version: 2026.243.0300
+        base: cachyos-base
+        tag: worker
+        description: |-
+            The AgentTeams worker image: a cachyos base composing the
+            agentteams-worker layer — the openclaw gateway runtime (built from
+            the pinned upstream source commit) with the agt REST client, mc, and
+            the shared AgentTeams protocol libs. The controller spawns this image
+            for Worker CRs through the host rootless podman socket; the worker
+            joins the charly network and reaches the controller's in-container
+            services by the controller container's DNS name. Rootless: the
+            service runs as the image user (uid 1000).
+        # The controller spawns the worker container DIRECTLY from this image's
+        # baked OCI config (its dockerCreatePayload sends no Cmd/Entrypoint), with
+        # no charly deploy in the loop to inject the init command — so the worker
+        # box bakes the supervisord init as its OCI entrypoint, exactly like the
+        # manager box. The base image's inherited default command is cleared at
+        # emission (CMD []), so the entrypoint runs bare. /etc/supervisord.conf is
+        # assembled at build time.
+        entrypoint:
+            - supervisord
+            - -n
+            - -c
+            - /etc/supervisord.conf
+        candy:
+            - '@github.com/opencharly/layer-supervisord:v2026.240.0121'
+            - '@github.com/opencharly/pod-agentteams-worker:v2026.239.1600'

@@ -1,0 +1,26 @@
+# cachyos-base — the minimal CachyOS stage base the agentteams images compose.
+# A LOCAL base box rather than a namespace import of distro-cachyos: importing
+# that namespace drags in its `charly-marketplace` candy, which references this
+# repo's own agentteams candy via @github — resolving to the LOCAL candy and
+# raising a "local candy shadows remote candy" validate warning. A local base
+# keeps this project self-contained and warning-free.
+#
+# Pinned by digest (NO floating tag): Docker Hub publishes ONLY the rolling tag
+# for cachyos-v3, so a digest is the most precise coordinate. Refresh:
+#   skopeo inspect --no-tags docker://docker.io/cachyos/cachyos-v3 | jq -r .Digest
+cachyos-base:
+    candy:
+        version: 2026.231.1219
+        base: docker.io/cachyos/cachyos-v3@sha256:2f87e702822dc3bc1c527215ace3f7b1b20c5d9d4171bb78e012557be477d487
+        build:
+            - pac
+        distro:
+            - cachyos
+            - arch
+        candy:
+            # The CachyOS base-verification candy: proves the base image really is
+            # the v3-optimized CachyOS (os-release, pacman, v3 repo, sandbox gate).
+            # Composing it also gives this external-base image a version via its
+            # candy chain (a candy-free external-base image needs a dedicated
+            # `version:` or the build refuses).
+            - '@github.com/opencharly/distro-cachyos/candy/cachyos-base-check:v2026.258.2256'
