@@ -12,6 +12,13 @@ cachyos-base:
     candy:
         version: 2026.231.1219
         base: docker.io/cachyos/cachyos-v3@sha256:2f87e702822dc3bc1c527215ace3f7b1b20c5d9d4171bb78e012557be477d487
+        description: |-
+            The minimal CachyOS stage base the AgentTeams images compose: the
+            digest-pinned CachyOS v3 base image (pacman, v3 repo, scriptlet-sandbox
+            disabled) with the cachyos-base-check verification candy composed in.
+            Declared locally rather than importing the distro-cachyos namespace,
+            whose charly-marketplace candy back-references this repo's agentteams
+            candy via @github.
         build:
             - pac
         distro:
