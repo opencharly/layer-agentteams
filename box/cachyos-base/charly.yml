@@ -24,3 +24,12 @@ cachyos-base:
             # candy chain (a candy-free external-base image needs a dedicated
             # `version:` or the build refuses).
             - '@github.com/opencharly/distro-cachyos/candy/cachyos-base-check:v2026.258.2256'
+        plan:
+            - check: the composed base image is CachyOS (os-release reports ID=cachyos)
+              id: cachyos-base-os-release
+              command: |
+                  grep -q '^ID=cachyos' /etc/os-release
+            - check: the CachyOS base ships the task runner at /usr/local/bin/task
+              id: cachyos-base-task
+              command: |
+                  test -x /usr/local/bin/task

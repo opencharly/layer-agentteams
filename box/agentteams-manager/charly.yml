@@ -27,3 +27,9 @@ agentteams-manager:
         candy:
             - '@github.com/opencharly/layer-supervisord:v2026.240.0121'
             - '@github.com/opencharly/pod-agentteams-manager:v2026.239.1603'
+        plan:
+            - check: the manager start script and the baked supervisord init config are present
+              id: agentteams-manager-runtime
+              command: |
+                  test -x /opt/agentteams-manager/start-manager.sh &&
+                  test -f /etc/supervisord.conf

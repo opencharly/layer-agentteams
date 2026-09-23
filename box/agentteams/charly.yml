@@ -32,3 +32,8 @@ agentteams:
         candy:
             - '@github.com/opencharly/layer-supervisord:v2026.240.0121'
             - agentteams
+        plan:
+            - check: the composed AgentTeams image ships the controller binary
+              id: agentteams-box-controller
+              command: |
+                  test -x /usr/local/bin/agentteams-controller
