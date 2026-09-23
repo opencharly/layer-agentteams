@@ -1,5 +1,39 @@
 version: 2026.249.2125
 repo: github.com/opencharly/layer-agentteams
+# The charly toolchain layer, declared at project scope so the
+# check-agentteams-snapshot bed's add_candy dependency resolves: the
+# `layer-agentteams-snapshot` candy composes the bare `charly` candy (the
+# in-venue CLI the snapshot/apply round-trip needs), and a bare dependency
+# resolves only against the CONSUMING project's candy closure. This repo's
+# closure did not contain `charly`; declaring the toolchain here puts it in the
+# closure without composing it into the production agentteams image.
+charly-toolchain:
+    candy:
+        version: 2026.243.0408
+        description: |-
+            The charly toolchain layer (the on-PATH `charly` CLI plus its VM /
+            encrypted-storage / console-relay stack), declared at project scope so
+            the `charly` candy that `layer-agentteams-snapshot` composes resolves
+            in this project's candy closure. The snapshot bed needs an in-venue
+            `charly` for `charly agentteams snapshot|apply`; the production
+            agentteams box deliberately does not carry it, so it is provided as a
+            project-closure dependency, not composed into any image.
+        candy:
+            - '@github.com/opencharly/layer-charly:v2026.243.0408'
+            # Pin the out-of-process pod deploy provider into the project closure
+            # (the documented pattern for external builder/plugin candies: a
+            # version-less provider ref otherwise resolves to the mutable "latest
+            # tag"). The current latest plugin-deploy-pod (v2026.266.1057, tagged
+            # after this tree was frozen) demands schema 2026.261.1747 and refuses
+            # to deploy a 2026.249 project; v2026.250.1020 is the provider version
+            # consistent with this project's schema and is what the beds run with.
+            - '@github.com/opencharly/plugin-deploy-pod/candy/plugin-deploy-pod:v2026.250.1020'
+        plan:
+            - check: the charly CLI is present on PATH
+              id: charly-toolchain-binary
+              file:
+                file: /usr/bin/charly
+                exists: true
 defaults:
     platform:
         - linux/amd64
