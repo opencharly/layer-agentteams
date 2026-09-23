@@ -248,8 +248,8 @@ agentteams-skill:
             - `/charly-internals:disposable` — the disposable-bed authorization model.
 
 # =============================================================================
-# agentteams-vm + check-agentteams-pod / -snapshot / -vm — the R10 beds for the
-# AgentTeams stack. Moved here from opencharly/charly's charly.yml, which cannot
+# check-agentteams-pod / -snapshot — the R10 beds for the AgentTeams stack on
+# the POD substrate. Moved here from opencharly/charly's charly.yml, which cannot
 # exercise the agentteams candy as in-development code (the bed's dev-tree
 # override resolves the bed project's own superproject, not the candy owner), so
 # the artifact owner tests its own composition locally.
@@ -257,30 +257,13 @@ agentteams-skill:
 # The pod bed binds the host rootless podman socket into the box so the
 # controller can spawn the manager container from the pre-built
 # agentteams-manager image (AGENTTEAMS_MANAGER_IMAGE) on the charly network.
+#
+# The VM-substrate bed (check-agentteams-vm + its agentteams-vm cloud-image
+# template) is NOT relocated here yet: its green run needs the project schema
+# cutover to 2026.261.1747 (tracked in opencharly/layer-agentteams#4) plus the
+# plugin-deploy-vm step:system-packages hang fix (opencharly/plugin-deploy-vm#23).
+# It stays in opencharly/charly until those land, so coverage is never dropped.
 # =============================================================================
-agentteams-vm:
-    vm:
-        source:
-            kind: cloud_image
-            url: https://geo.mirror.pkgbuild.com/images/v20260701.551070/Arch-Linux-x86_64-cloudimg-20260701.551070.qcow2
-            checksum:
-                type: sha256
-                value: a99844dda491606f81f463ce96851ae03d90ca8fa727671cac2da86a07a7cd61
-            base_user: arch
-            distro: arch
-        backend: libvirt
-        disk_size: 40G
-        ram: 8G
-        cpu: 4
-        machine: q35
-        firmware: bios
-        ssh:
-            port_auto: true
-            key_source: generate
-        cloud_init:
-            timezone: UTC
-            package:
-                - sudo
 check-agentteams-pod:
     pod:
         image: agentteams
@@ -487,110 +470,3 @@ check-agentteams-snapshot:
                 command: >-
                     sh -c 'set -e; charly agentteams worker list | grep -q bed-worker || charly agentteams worker create --name bed-worker --no-wait; charly agentteams worker list | grep -q bed-worker; rm -rf /tmp/at-snap; charly agentteams snapshot --out /tmp/at-snap >/dev/null; test -s /tmp/at-snap/workers.yml; grep -q bed-worker /tmp/at-snap/workers.yml; charly agentteams worker delete bed-worker >/dev/null; ! charly agentteams worker list | grep -q bed-worker; charly agentteams apply -f /tmp/at-snap >/dev/null; charly agentteams worker list | grep -q bed-worker; echo ROUNDTRIP-OK'
                 in_container: true
-check-agentteams-vm:
-    vm:
-        from: agentteams-vm
-        disposable: true
-        lifecycle: dev
-        description: >-
-            R10 bed for the AgentTeams stack on the VM substrate. The add_candy model installs the agentteams top composition (minio, matrix, element, higress, controller) into the Arch cloud-image guest, where the services run as systemd units under uid 1000 (init polymorphism — no supervisord in a VM). The controller's rootless podman socket is set up by the controller candy's plan step; the bed's host-side cp-box steps deliver the pre-built manager/worker images into the guest's rootless store, and the controller spawns the manager + a worker from them through the rootless socket — proving the full controller-spawns-manager → create-worker → room sequence in-guest.
-        add_candy:
-            - '@github.com/opencharly/layer-agentteams:v2026.240.0118'
-        install_opts:
-            with_service: true
-            allow_repo_changes: true
-            allow_root_tasks: true
-        plan:
-            - check: the agentteams VM reached steady state
-              id: agentteams-vm-running
-              exit_status: 0
-              stdout:
-                - contains: '"kind": "vm"'
-                - contains: check-agentteams-vm
-              context:
-                - runtime
-              command:
-                command: ${CHARLY_BIN} status --json
-                in_container: false
-            - check: deliver the pre-built manager image into the guest rootless store (idempotent — skips when the guest already holds it verified intact)
-              id: agentteams-vm-cp-manager
-              timeout: 600s
-              context:
-                - runtime
-              command:
-                command: ${CHARLY_BIN} vm cp-box agentteams-vm ghcr.io/opencharly/agentteams-manager:manager --rootless --domain check-agentteams-vm
-                in_container: false
-            - check: deliver the pre-built worker image into the guest rootless store (idempotent — skips when the guest already holds it verified intact)
-              id: agentteams-vm-cp-worker
-              timeout: 600s
-              context:
-                - runtime
-              command:
-                command: ${CHARLY_BIN} vm cp-box agentteams-vm ghcr.io/opencharly/agentteams-worker:worker --rootless --domain check-agentteams-vm
-                in_container: false
-            - check: the minio S3 API answers its health probe
-              id: agentteams-vm-minio-health
-              timeout: 30s
-              context:
-                - runtime
-              command: 'curl -fsS http://127.0.0.1:9000/minio/health/live'
-            - check: the Matrix homeserver answers the client versions endpoint
-              id: agentteams-vm-matrix-versions
-              timeout: 30s
-              context:
-                - runtime
-              command: 'curl -fsS http://127.0.0.1:6167/_matrix/client/versions'
-            - check: the Element Web client answers on its port
-              id: agentteams-vm-element-http
-              timeout: 30s
-              context:
-                - runtime
-              command: 'curl -fsS http://127.0.0.1:8088/'
-            - check: the Higress apiserver answers on its internal port
-              id: agentteams-vm-higress-apiserver
-              timeout: 60s
-              context:
-                - runtime
-              command: 'curl -sk https://127.0.0.1:18443/version | grep -q "gitVersion"'
-            - check: the Higress gateway is healthy (pilot-agent + envoy answer the status port; bounded probe — envoy's V8 WASM engine segfaults once at startup under the upstream --concurrency default and the init's restart policy covers the ~15s down window on both substrates)
-              id: agentteams-vm-higress-gateway-health
-              timeout: 60s
-              context:
-                - runtime
-              command: 'for i in $(seq 1 28); do curl -sf http://127.0.0.1:15021/healthz/ready && exit 0; sleep 2; done; exit 1'
-            - check: the Higress gateway serves the console on its ingress port (the 8080 listener only materializes when the proxy node LABELS match the Gateway selector; bounded probe for the same startup/restart window)
-              id: agentteams-vm-higress-gateway-http
-              timeout: 60s
-              context:
-                - runtime
-              command: |
-                for i in $(seq 1 28); do
-                    code="$(curl -s -o /dev/null -w '%{http_code}' http://127.0.0.1:8080/)"
-                    [ "${code}" = "200" ] && exit 0
-                    sleep 2
-                done
-                exit 1
-            - check: the Higress console answers on its port
-              id: agentteams-vm-higress-console-http
-              timeout: 60s
-              context:
-                - runtime
-              command: 'curl -fsS http://127.0.0.1:8001/'
-            - check: the controller spawns the default manager and it reaches Running phase (proves the manager image is in the guest rootless store under AGENTTEAMS_MANAGER_IMAGE and the controller can spawn it through the rootless podman socket)
-              id: agentteams-vm-manager-running
-              timeout: 600s
-              context:
-                - runtime
-              agentteams:
-                method: manager-running
-              stdout:
-                - contains: "Running"
-            - check: the controller creates a Worker CR, spawns the worker container from the pre-built agentteams-worker image, and the worker reaches Running with its Matrix room created (proves AGENTTEAMS_WORKER_IMAGE is in the guest rootless store and the controller can spawn the worker through the rootless podman socket)
-              id: agentteams-vm-worker-running
-              timeout: 600s
-              context:
-                - runtime
-              agentteams:
-                method: worker-running
-              stdout:
-                - contains: "room alias resolvable"
