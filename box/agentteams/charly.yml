@@ -1,15 +1,16 @@
-# agentteams — the AgentTeams top box (cachyos base composing the LOCAL
-# agentteams top composition candy). Declared in a separate discovered file
-# because a single document's top-level node names are globally unique: the
-# `agentteams` CANDY (the layer fragment) is declared in this repo's root
-# `charly.yml`, so the IMAGE of the same name lives here. Cross-FILE cross-kind
-# reuse is permitted (the loader routes by shape), and `discover: box` picks
-# this up.
+# AgentTeams top box (cachyos base composing the LOCAL `agentteams` composition
+# candy). Declared in a separate discovered file because a single document's
+# top-level node names are globally unique: the `agentteams` CANDY (the layer
+# fragment) is declared in this repo's root `charly.yml`, so the IMAGE of the
+# same name lives here. Cross-FILE cross-kind reuse is permitted (the loader
+# routes by shape), and `discover: box` picks this up.
 #
-# Moved here from opencharly/charly's charly.yml, which cannot exercise this
-# candy as in-development code (the bed's dev-tree override resolves the bed
-# project's own superproject, not the candy owner), so the artifact owner builds
-# and tests its own composition locally.
+# This is a NEW local composition, not a copy of the same-named box that stays
+# in opencharly/charly for its VM bed: that box bases on `cachyos.cachyos` and
+# pins the published `layer-agentteams`, whereas this one bases on this repo's
+# local `cachyos-base` and composes the LOCAL candy — so the pod beds built from
+# it exercise in-development code with no @github pin (the bed's dev-tree
+# override resolves this repo's own superproject).
 agentteams:
     candy:
         version: 2026.243.0300
