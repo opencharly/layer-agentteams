@@ -1,0 +1,41 @@
+# AgentTeams top box (cachyos base composing the LOCAL `agentteams` composition
+# candy). Declared in a separate discovered file because a single document's
+# top-level node names are globally unique: the `agentteams` CANDY (the layer
+# fragment) is declared in this repo's root `charly.yml`, so the IMAGE of the
+# same name lives here. Cross-FILE cross-kind reuse is permitted (the loader
+# routes by shape), and `discover: box` picks this up.
+#
+# This is a NEW local composition, not a copy of the same-named box that stays
+# in opencharly/charly for its VM bed: that box bases on `cachyos.cachyos` and
+# pins the published `layer-agentteams`, whereas this one bases on this repo's
+# local `cachyos-base` and composes the LOCAL candy — so the pod beds built from
+# it exercise in-development code with no @github pin (the bed's dev-tree
+# override resolves this repo's own superproject).
+agentteams:
+    candy:
+        version: 2026.243.0300
+        base: cachyos-base
+        description: |-
+            The AgentTeams top box: a cachyos base composing the agentteams top
+            composition candy — agentteams-minio (MinIO S3 + mc-mirror),
+            agentteams-matrix (Tuwunel Matrix homeserver), agentteams-element
+            (Element Web via rootless nginx), agentteams-higress (the Higress AI
+            gateway: apiserver, controller, pilot, envoy gateway, console), and
+            agentteams-controller (the kine-backed kube-apiserver + Manager/
+            Worker/Team/Human reconciler serving the REST API on :8090). Every
+            service runs as the image user (uid 1000) against its own
+            home-relative volume (~/.agentteams/minio, ~/.agentteams/matrix,
+            ~/.agentteams/higress, ~/.agentteams/controller) — the rootless charly
+            architecture, no root anywhere. All service start scripts are
+            charly-owned (written by the candies), not upstream AgentTeams
+            scripts. Spawned Manager/Worker containers join the charly network
+            and reach the controller — and every in-container service — by the
+            controller container's DNS name.
+        candy:
+            - '@github.com/opencharly/layer-supervisord:v2026.240.0121'
+            - agentteams
+        plan:
+            - check: the composed AgentTeams image ships the controller binary
+              id: agentteams-box-controller
+              command: |
+                  test -x /usr/local/bin/agentteams-controller
