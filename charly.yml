@@ -275,10 +275,12 @@ agentteams-skill:
 # agentteams-manager image (AGENTTEAMS_MANAGER_IMAGE) on the charly network.
 #
 # The VM-substrate bed (check-agentteams-vm + its agentteams-vm cloud-image
-# template) is NOT relocated here yet: its green run needs the project schema
-# cutover to 2026.261.1747 (tracked in opencharly/layer-agentteams#4) plus the
-# plugin-deploy-vm step:system-packages hang fix (opencharly/plugin-deploy-vm#23).
-# It stays in opencharly/charly until those land, so coverage is never dropped.
+# template) has exactly ONE home (opencharly/charly) and is NOT a duplicate; it
+# is outside this relocation because its green run is blocked on two named
+# prerequisites. This PR advances the first — the project schema cutover to
+# 2026.261.1747, tracked in opencharly/layer-agentteams#4 — by migrating this
+# project to that schema. The remaining blocker is the plugin-deploy-vm
+# step:system-packages hang, opencharly/plugin-deploy-vm#23.
 # =============================================================================
 check-agentteams-pod:
     pod:
