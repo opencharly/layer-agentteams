@@ -13,7 +13,6 @@
 # override resolves this repo's own superproject).
 agentteams:
     candy:
-        version: 2026.243.0300
         base: cachyos-base
         description: |-
             The AgentTeams top box: a cachyos base composing the agentteams top
