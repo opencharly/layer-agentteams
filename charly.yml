@@ -1,4 +1,3 @@
-version: 2026.261.1747
 repo: github.com/opencharly/layer-agentteams
 # The charly toolchain layer, declared at project scope so the
 # check-agentteams-snapshot bed's add_candy dependency resolves: the
@@ -9,7 +8,6 @@ repo: github.com/opencharly/layer-agentteams
 # closure without composing it into the production agentteams image.
 charly-toolchain:
     candy:
-        version: 2026.243.0408
         description: |-
             The charly toolchain layer (the on-PATH `charly` CLI plus its VM /
             encrypted-storage / console-relay stack), declared at project scope so
@@ -54,7 +52,6 @@ discover:
       recursive: true
 agentteams:
     candy:
-        version: 2026.223.1500
         description: |-
             The AgentTeams top composition: the controller plus the four foundation
             services it embeds in one container — agentteams-minio (MinIO S3 +
