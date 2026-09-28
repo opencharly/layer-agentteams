@@ -1,6 +1,5 @@
 agentteams-manager:
     candy:
-        version: 2026.243.0300
         base: cachyos-base
         tag: manager
         description: |-
