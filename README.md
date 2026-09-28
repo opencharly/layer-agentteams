@@ -59,7 +59,6 @@ VM-substrate bed lives in `opencharly/charly`.
   `check-agentteams-pod` / `check-agentteams-snapshot` beds.
 - `box/agentteams/charly.yml`, `box/agentteams-manager/charly.yml`,
   `box/agentteams-worker/charly.yml`, `box/cachyos-base/charly.yml` — the images.
-- `.github/workflows/deploy.yml` — the manifest gate (`charly box validate`).
 - `.github/workflows/tag-on-merge.yml` — CalVer tag + `CHANGELOG/` on merge.
 - `README.md` — this user overview.
 
