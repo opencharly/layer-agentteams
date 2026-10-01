@@ -74,7 +74,7 @@ agentteams:
             - '@github.com/opencharly/pod-agentteams-matrix:v2026.271.2313'
             - '@github.com/opencharly/pod-agentteams-element:v2026.271.2323'
             - '@github.com/opencharly/pod-agentteams-higress:v2026.271.2321'
-            - '@github.com/opencharly/pod-agentteams-controller:v2026.271.2341'
+            - '@github.com/opencharly/pod-agentteams-controller:v2026.274.0627'
         env:
             # Root-cause fix for the Higress gateway startup crash (R1). The
             # pod-agentteams-higress candy's start-gateway.sh execs pilot-agent with
