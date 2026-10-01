@@ -29,7 +29,7 @@ cachyos-base:
             # Composing it also gives this external-base image a version via its
             # candy chain (a candy-free external-base image needs a dedicated
             # `version:` or the build refuses).
-            - '@github.com/opencharly/distro-cachyos/candy/cachyos-base-check:v2026.274.1517'
+            - '@github.com/opencharly/distro-cachyos/candy/cachyos-base-check:v2026.274.1614'
         plan:
             - check: the composed base image is CachyOS (os-release reports ID=cachyos)
               id: cachyos-base-os-release
