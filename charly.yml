@@ -17,7 +17,7 @@ charly-toolchain:
             agentteams box deliberately does not carry it, so it is provided as a
             project-closure dependency, not composed into any image.
         candy:
-            - '@github.com/opencharly/layer-charly:v2026.271.2122'
+            - '@github.com/opencharly/layer-charly:v2026.274.0345'
             # Pin the out-of-process pod deploy provider into the project closure
             # (the documented pattern for external builder/plugin candies: a
             # version-less provider ref otherwise resolves to the mutable "latest"
