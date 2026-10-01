@@ -28,7 +28,7 @@ charly-toolchain:
             # The older v2026.250.1020 predates that adopt — it drops resolved_image
             # and config fails "image not found in local storage". Pinned here to the
             # matching schema (2026.261.1747) so the bed resolves deterministically.
-            - '@github.com/opencharly/plugin-deploy-pod/candy/plugin-deploy-pod:v2026.272.0029'
+            - '@github.com/opencharly/plugin-deploy-pod/candy/plugin-deploy-pod:v2026.274.2042'
         plan:
             - check: the charly CLI is present on PATH
               id: charly-toolchain-binary
