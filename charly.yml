@@ -17,7 +17,7 @@ charly-toolchain:
             agentteams box deliberately does not carry it, so it is provided as a
             project-closure dependency, not composed into any image.
         candy:
-            - '@github.com/opencharly/layer-charly:v2026.243.0408'
+            - '@github.com/opencharly/layer-charly:v2026.271.2122'
             # Pin the out-of-process pod deploy provider into the project closure
             # (the documented pattern for external builder/plugin candies: a
             # version-less provider ref otherwise resolves to the mutable "latest"
@@ -28,7 +28,7 @@ charly-toolchain:
             # The older v2026.250.1020 predates that adopt — it drops resolved_image
             # and config fails "image not found in local storage". Pinned here to the
             # matching schema (2026.261.1747) so the bed resolves deterministically.
-            - '@github.com/opencharly/plugin-deploy-pod/candy/plugin-deploy-pod:v2026.266.1057'
+            - '@github.com/opencharly/plugin-deploy-pod/candy/plugin-deploy-pod:v2026.272.0029'
         plan:
             - check: the charly CLI is present on PATH
               id: charly-toolchain-binary
@@ -70,11 +70,11 @@ agentteams:
             controller — and every in-container service — by the controller
             container's DNS name.
         candy:
-            - '@github.com/opencharly/pod-agentteams-minio:v2026.237.454'
-            - '@github.com/opencharly/pod-agentteams-matrix:v2026.237.454'
-            - '@github.com/opencharly/pod-agentteams-element:v2026.237.454'
-            - '@github.com/opencharly/pod-agentteams-higress:v2026.237.454'
-            - '@github.com/opencharly/pod-agentteams-controller:v2026.237.454'
+            - '@github.com/opencharly/pod-agentteams-minio:v2026.271.2323'
+            - '@github.com/opencharly/pod-agentteams-matrix:v2026.271.2313'
+            - '@github.com/opencharly/pod-agentteams-element:v2026.271.2323'
+            - '@github.com/opencharly/pod-agentteams-higress:v2026.271.2321'
+            - '@github.com/opencharly/pod-agentteams-controller:v2026.271.2341'
         env:
             # Root-cause fix for the Higress gateway startup crash (R1). The
             # pod-agentteams-higress candy's start-gateway.sh execs pilot-agent with
@@ -461,7 +461,7 @@ check-agentteams-snapshot:
         description: >-
             R10 bed for Factory Unit 6. Proves the snapshot/hydrate round-trip against a live AgentTeams deploy: the controller's worker is captured into a hydration bundle, the worker is DELETED, the bundle is applied back, and the worker is listed again.
         add_candy:
-            - '@github.com/opencharly/layer-agentteams-snapshot:v2026.239.1618'
+            - '@github.com/opencharly/layer-agentteams-snapshot:v2026.272.0651'
         volume:
             - name: podman-socket
               type: bind
