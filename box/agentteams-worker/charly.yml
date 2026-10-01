@@ -24,8 +24,8 @@ agentteams-worker:
             - -c
             - /etc/supervisord.conf
         candy:
-            - '@github.com/opencharly/layer-supervisord:v2026.240.0121'
-            - '@github.com/opencharly/pod-agentteams-worker:v2026.239.1600'
+            - '@github.com/opencharly/layer-supervisord:v2026.271.1817'
+            - '@github.com/opencharly/pod-agentteams-worker:v2026.271.2340'
         plan:
             - check: the worker start script and the baked supervisord init config are present
               id: agentteams-worker-runtime
