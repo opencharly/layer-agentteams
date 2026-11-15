@@ -29,7 +29,14 @@ cachyos-base:
             # Composing it also gives this external-base image a version via its
             # candy chain (a candy-free external-base image needs a dedicated
             # `version:` or the build refuses).
-            - '@github.com/opencharly/distro-cachyos/candy/cachyos-base-check:v2026.274.2120'
+            # Keep this candy ref on a distro-cachyos tag NEWER than the crabbox fix
+            # (2026.293.1743). v2026.274.2120 was the tag whose tree still carried
+            # `box/crabbox-e2e` pinning `pod-crabbox:v2026.274.0652` — a DELETED tag whose
+            # commit no longer exists — so resolving this box aborted the marketplace
+            # corpus generation org-wide (opencharly/marketplace#613). RDD-probed before
+            # this edit with the generator: the same ref at v2026.274.2120 fails, at
+            # v2026.319.0820 it generates clean.
+            - '@github.com/opencharly/distro-cachyos/candy/cachyos-base-check:v2026.319.0820'
         plan:
             - check: the composed base image is CachyOS (os-release reports ID=cachyos)
               id: cachyos-base-os-release
